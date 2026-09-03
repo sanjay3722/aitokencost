@@ -61,7 +61,7 @@ export default function Calculator() {
           <span className="hint">
             ≈ {formatTokens(openaiInputTokens)} input tokens
             {exact
-              ? " — exact for OpenAI models, estimated for Claude & Gemini"
+              ? " — exact for OpenAI models, estimated for others"
               : " — estimated (local tokeniser unavailable)"}
           </span>
         </label>
