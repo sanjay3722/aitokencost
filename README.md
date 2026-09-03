@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# aitokencost.dev
 
-## Getting Started
+A single-page tool: paste a prompt, see what one request costs per month across
+OpenAI, Anthropic, and Google models. Token counting for OpenAI models is exact
+(js-tiktoken, `o200k_base`); Claude and Gemini use a character heuristic until
+the server-side counting route is added.
 
-First, run the development server:
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build + typecheck
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Layout
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What it is |
+| --- | --- |
+| `src/lib/pricing.ts` | The model table. USD per 1M tokens, per-model `verifiedOn` date. Editing this is the product. |
+| `src/lib/calc.ts` | Token counting (memoised tiktoken + heuristic fallback), cost math, the shared `compare()` used by both input modes, formatters. |
+| `src/components/Calculator.tsx` | Client component. "Paste a prompt" tab wired; "I already have a bill" tab stubbed for Week 2. |
+| `src/components/ResultsTable.tsx` | Presentational comparison table, shared between both modes. |
+| `src/app/page.tsx` / `layout.tsx` | Page shell and metadata. |
+| `src/app/globals.css` | The whole stylesheet. Plain CSS, light/dark via `prefers-color-scheme`. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Before you share the URL
 
-## Learn More
+Work through `VERIFY.md` — every price ships unverified and the UI says so
+until you hand-check it.
 
-To learn more about Next.js, take a look at the following resources:
+## Next
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `files/BUILD-PLAN.md`. Immediate: verify prices (Week 1.1), then the
+`/api/count` route for exact Claude/Gemini counts, then the Week 2 bill mode
+(`impliedVolume` in `calc.ts` is already there for it).
